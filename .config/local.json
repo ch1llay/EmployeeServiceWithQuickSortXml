@@ -1,7 +1,7 @@
 {
   "Environment" : "local",
   "port" : 80,
-  "postgresConnection": "postgres://postgres:password@localhost/employeesservice?sslmode=disable\"",
+  "postgresConnection": "postgres://postgres:password@localhost/employeesservice?sslmode=disable",
   "mongoConnection" : "",
   "mongoDbName": "",
   "mongoCollectionName" : ""

@@ -17,7 +17,7 @@ type Config struct {
 }
 
 func ReadCfg() *Config {
-	filePath := "./.config/config.json"
+	filePath := "./.config/local.json"
 	fileByte, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)

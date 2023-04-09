@@ -15,6 +15,6 @@ type File struct {
 	Data       []byte    `json:"data"`
 }
 
-type FileReponse struct {
+type FileResponse struct {
 	Guid string `json:"guid"`
 }

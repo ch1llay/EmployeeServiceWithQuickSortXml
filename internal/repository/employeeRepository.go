@@ -23,7 +23,7 @@ func (e *EmployeeRepository) Insert(employee *Model.Employee) (*Model.Employee, 
 	}
 
 	defer db.Close()
-	err = db.QueryRow(query.InsertEmployee).Scan(&employee.Id)
+	err = db.QueryRow(query.InsertEmployee, employee.Name, employee.Lastname, employee.Patronymic, employee.Birthday).Scan(&employee.Id)
 	if err != nil {
 		return &Model.Employee{}, err
 	}
@@ -39,7 +39,7 @@ func (e *EmployeeRepository) GetById(id int) (*Model.Employee, error) {
 
 	defer db.Close()
 	employee := Model.Employee{}
-	err = db.QueryRow(query.GetByIdEmployee, employee.Id).Scan(&employee.Name, &employee.Lastname, &employee.Patronymic, &employee.Birthday)
+	err = db.QueryRow(query.GetByIdEmployee, id).Scan(&employee.Id, &employee.Name, &employee.Lastname, &employee.Patronymic, &employee.Birthday)
 	if err != nil {
 		return &Model.Employee{}, err
 	}
@@ -54,14 +54,14 @@ func (e *EmployeeRepository) Get() (employees []*Model.Employee, err error) {
 	}
 
 	defer db.Close()
-	rows, err := db.Query(query.GetByIdEmployee)
+	rows, err := db.Query(query.GetAllEmployees)
 	defer rows.Close()
 
 	if err != nil {
 		return
 	}
 
-	e.scanEmployees(rows, employees)
+	employees, err = e.scanEmployees(rows, employees)
 
 	return
 }
@@ -94,7 +94,7 @@ func (e *EmployeeRepository) DeleteById(id int) (deletingId int, err error) {
 	return
 }
 
-func (e *EmployeeRepository) scanEmployees(rows *sql.Rows, employees []*Model.Employee) {
+func (e *EmployeeRepository) scanEmployees(rows *sql.Rows, employees []*Model.Employee) ([]*Model.Employee, error) {
 	for rows.Next() {
 		employee := new(Model.Employee)
 		err := rows.Scan(&employee.Id, &employee.Name, &employee.Lastname, &employee.Patronymic, &employee.Birthday)
@@ -104,5 +104,9 @@ func (e *EmployeeRepository) scanEmployees(rows *sql.Rows, employees []*Model.Em
 		}
 
 		employees = append(employees, employee)
+
 	}
+
+	return employees, nil
+
 }
