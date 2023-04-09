@@ -24,6 +24,10 @@ func (s *Server) Run(config *Config, handler *handler.Handler) error {
 		WriteTimeout:   10 * time.Second,
 	}
 
+	if err := handler.EmployeeService.EmployeeRepository.InitDatabase(); err != nil {
+		return err
+	}
+
 	return s.httpServer.ListenAndServe()
 }
 

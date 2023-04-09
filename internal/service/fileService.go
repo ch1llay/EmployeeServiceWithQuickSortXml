@@ -1,32 +1,30 @@
 package service
 
 import (
-	"EmployeeServiceWithQuickSortXml/Models"
+	"EmployeeServiceWithQuickSortXml/Model"
 	"EmployeeServiceWithQuickSortXml/internal/repository"
-	"errors"
 )
 
-type FService interface {
-	Write(file *Models.File) string
-	GetByGuid(guid string) *Models.File
+type FileServ interface {
+	Insert(file *Model.File) (string, error)
+	GetById(guid string) (*Model.File, error)
+	DeleteById(guid string) error
 }
 
 type FileService struct {
-	FileRepository *repository.FileRepository
+	FileRepository repository.FileRep
 }
 
-func NewFileService(fileRep *repository.FileRepository) *FileService {
+func NewFileService(fileRep repository.FileRep) *FileService {
 	return &FileService{FileRepository: fileRep}
 }
 
-func (e *FileService) GetByGuid(guid string) (*Models.File, error) {
-	return &Models.File{}, errors.New("")
+func (f *FileService) Insert(file *Model.File) (string, error) {
+	return f.FileRepository.Insert(file)
 }
-
-func (e *FileService) Delete(guid string) error {
-	return e.FileRepository.Delete(guid)
+func (f *FileService) GetByGuid(guid string) (*Model.File, error) {
+	return f.FileRepository.GetById(guid)
 }
-
-func (e *FileService) GetAll() []*Models.File {
-	return make([]*Models.File, 10)
+func (f *FileService) DeleteById(guid string) error {
+	return f.FileRepository.DeleteById(guid)
 }

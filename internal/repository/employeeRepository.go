@@ -1,78 +1,119 @@
 package repository
 
 import (
-	"EmployeeServiceWithQuickSortXml/Models"
+	"EmployeeServiceWithQuickSortXml/Model"
+	"EmployeeServiceWithQuickSortXml/internal/repository/query"
 	"database/sql"
-	"errors"
+	"fmt"
 	_ "github.com/lib/pq"
 )
 
+type EmployeeRep interface {
+	Insert(employee *Model.Employee) (*Model.Employee, error)
+	GetById(id int) (*Model.Employee, error)
+	Get() ([]*Model.Employee, error)
+	Update(newEmployee *Model.Employee) (*Model.Employee, error)
+	DeleteById(id int) error
+}
 type EmployeeRepository struct {
-	connectionString string
-	db               *sql.DB
+	ConnectionString   string
+	passportRepository EmployeeRep
+	departmentRepository Repository
+	SqlFileReader    *SqlReader
 }
 
-func (e *EmployeeRepository) Open() error {
-	db, err := sql.Open("postgres", e.connectionString)
+func NewEmployeeRepository(connectionString string, scriptPath string) *EmployeeRepository {
+	return &EmployeeRepository{ConnectionString: connectionString}}
+}
+
+func (e *EmployeeRepository) Insert(employee *Model.Employee) (*Model.Employee, error) {
+	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
 
-	if err := db.Ping(); err != nil {
-		return err
-	}
-
-	e.db = db
-
-	e.db.Exec()
-
-	return nil
-}
-
-func (e *EmployeeRepository) Close() {
-	e.db.Close()
-}
-
-func NewEmployeeRepository(connectionString string) *EmployeeRepository {
-	return &EmployeeRepository{connectionString: connectionString}
-}
-
-func (e *EmployeeRepository) GetById(id int) (*Models.Employee, error) {
-	return &Models.Employee{}, errors.New("")
-}
-
-func (e *EmployeeRepository) GetAll() []*Models.Employee {
-	return make([]*Models.Employee, 10)
-}
-
-func (e *EmployeeRepository) Create(employee *Models.Employee) (*Models.Employee, error) {
-	err := e.db.QueryRow("insert into employees (name, age, department_name) values ($1, $2, $3) RETURNING id", employee.Name, employee.Age, employee.DepartmentName).Scan(&employee.Id)
+	defer db.Close()
+	err = db.QueryRow(query.InsertEmployee).Scan(&employee.Id)
 	if err != nil {
-		return &Models.Employee{}, err
+		return &Model.Employee{}, err
 	}
 
 	return employee, nil
 
 }
-
-func (e *EmployeeRepository) Update(employee *Models.Employee) (*Models.Employee, error) {
-
-	err := e.db.QueryRow("update employees set name = $2 set age = $3 set department_name = $4 where id = $1", employee.Name, employee.Age, employee.DepartmentName)
+func (e *EmployeeRepository) GetById(id int) (*Model.Employee, error) {
+	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
-		return employee, err
+		fmt.Println(err)
 	}
 
-	return employee, nil
+	defer db.Close()
+	employee := Model.Employee{}
+	err = db.QueryRow(query.GetByIdEmployee, employee.Id).Scan(&employee.Name, &employee.Lastname, &employee.Patronymic, &employee.Birthday)
+	if err != nil {
+		return &Model.Employee{}, err
+	}
+
+	return &employee, nil
+}
+
+func (e *EmployeeRepository) Get() (employees []*Model.Employee, err error) {
+	db, err := sql.Open("postgres", e.ConnectionString)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer db.Close()
+	rows, err := db.Query(query.GetByIdEmployee)
+	defer rows.Close()
+
+
+	if err != nil {
+		return
+	}
+
+	e.scanEmployees(rows, employees)
+}
+
+func (e *EmployeeRepository) Update(employee *Model.Employee) (employeeRes *Model.Employee, err error) {
+	db, err := sql.Open("postgres", e.ConnectionString)
+	if err != nil {
+		return
+	}
+
+	defer db.Close()
+	err = db.QueryRow(query.UpdateByIdEmployee, employee.Id, employee.Name, employee.Lastname, employee.Patronymic).Scan()
+	if err != nil {
+		employeeRes = employee
+	}
+
+	return
 
 }
 
-func (e *EmployeeRepository) Delete(id int) error {
-	var id int
-	err := e.db.QueryRow("insert into employees (name, age, department_name) values ($1, $2, $3) RETURNING id", employee.Name, employee.Age, employee.DepartmentName).Scan(&id)
+func (e *EmployeeRepository) DeleteById(id int) (deletingId int, err error) {
+	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
-		return &Models.Employee{}, err
+		fmt.Println(err)
 	}
 
-	employee.Id = id
-	return employee, nil
+	defer db.Close()
+
+	err = db.QueryRow(query.DeleteByIdEmployee, id).Scan(&deletingId)
+	return
+}
+
+func (e *EmployeeRepository) scanEmployees(rows *sql.Rows, employees []*Model.Employee) []Model.Employee {
+	for rows.Next() {
+		employee := Model.Employee{}
+		err := rows.Scan(&employee.Id, &employee.Name, &employee.Lastname, &employee.Patronymic, &employee.Birthday)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		employees = append(employees, employee)
+	}
+
+	return employees
 }

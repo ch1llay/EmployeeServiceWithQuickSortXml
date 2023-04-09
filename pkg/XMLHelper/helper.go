@@ -1,7 +1,7 @@
 package XMLHelper
 
-import "EmployeeServiceWithQuickSortXml/Models"
+import "EmployeeServiceWithQuickSortXml/Model"
 
-func Write(employees *Models.Employee) {
+func Write(employees *Model.Employee) {
 
 }

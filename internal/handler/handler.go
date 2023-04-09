@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"EmployeeServiceWithQuickSortXml/Models"
+	"EmployeeServiceWithQuickSortXml/Model"
 	"EmployeeServiceWithQuickSortXml/internal/service"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
@@ -15,11 +16,14 @@ import (
 
 type Handler struct {
 	Router          *mux.Router
-	EmployeeService *service.EmployeeService
-	FileService     *service.FileService
+	EmployeeService service.EmployeeServ
+	FileService     service.FileServ
 }
 
 func (h *Handler) InitRoutes() {
+	h.Router.HandleFunc("ping", func(writer http.ResponseWriter, request *http.Request) {
+		fmt.Fprintf(writer, "pong")
+	})
 	h.Router.HandleFunc("employee/{id}", h.GetEmployeeById).Methods("GET")
 	h.Router.HandleFunc("employee/", h.GetAllEmployees).Methods("GET")
 	h.Router.HandleFunc("employee/", h.CreateEmployee).Methods("POST")
@@ -53,8 +57,10 @@ func (h *Handler) GetJsonModel(r *http.Request, model interface{}) error {
 	return err
 }
 
-func NewHandler(employeeService *service.EmployeeService, fileService *service.FileService) *Handler {
-	return &Handler{FileService: fileService, EmployeeService: employeeService}
+func NewHandler(employeeService service.EmployeeServ, fileService service.FileServ) *Handler {
+	h := &Handler{FileService: fileService, EmployeeService: employeeService, Router: mux.NewRouter()}
+	h.InitRoutes()
+	return h
 }
 
 func (h *Handler) GetEmployeeById(w http.ResponseWriter, r *http.Request) {
@@ -76,7 +82,7 @@ func (h *Handler) GetAllEmployees(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) CreateEmployee(w http.ResponseWriter, r *http.Request) {
-	var employee Models.Employee
+	var employee Model.Employee
 	if err := h.GetJsonModel(r, &employee); err == nil {
 		if newEmployee, errM := h.EmployeeService.Create(&employee); errM == nil {
 			h.respond(w, r, 200, newEmployee.Id)
@@ -90,7 +96,7 @@ func (h *Handler) CreateEmployee(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) UpdateEmployee(w http.ResponseWriter, r *http.Request) {
-	var employee Models.Employee
+	var employee Model.Employee
 	if err := h.GetJsonModel(r, &employee); err == nil {
 		newEmployee, errM := h.EmployeeService.Update(&employee)
 		if errM.Error() == "404" {
