@@ -13,31 +13,32 @@ import (
 )
 
 type App struct {
-	server   *http.Server
-	settings *config.Config
-	context  context.Context
+	server  *http.Server
+	config  *config.Config
+	context context.Context
 }
 
 func NewApp(cfg *config.Config, ctx context.Context) *App {
 	return &App{
-		server:   nil,
-		settings: cfg,
-		context:  ctx,
+		server:  nil,
+		config:  cfg,
+		context: ctx,
 	}
 }
 
 func (a *App) InitApp() {
-	fileRepository := repository.NewFileRepository(a.settings.MongoConnection, a.settings.MongoDbName, a.settings.MongoCollectionName)
-	employeeRepository := repository.NewEmployeeRepository(a.settings.PostgresConnection, "")
+	fileRepository := repository.NewFileRepository(a.config.MongoConnection, a.config.MongoDbName, a.config.MongoCollectionName)
+	employeeRepository := repository.NewEmployeeRepository(a.config.PostgresConnection)
 	fileService := service.NewFileService(fileRepository)
 	employeeService := service.NewEmployeeService(employeeRepository)
 	handlers := handler.NewHandler(employeeService, fileService)
-	srv := apiserver.New(handlers)
+	srv := apiserver.New()
+	srv.Configure(a.config, handlers)
 }
 
 func (a *App) Start() {
 	go func() {
-		log.Println(fmt.Sprintf("Server started on port %s enviroment is %s", a.settings.Port, a.settings.Env))
+		log.Println(fmt.Sprintf("Server started on port %s enviroment is %s", a.config.Port, a.config.Env))
 		a.server.ListenAndServe()
 	}()
 }

@@ -18,7 +18,7 @@ const UpdateByIdEmployee string = `update employees set
 const InsertDepartment string = "insert into departments (name) values($1) returning id"
 const GetByIdDepartment string = `select * from departments where id = $1`
 const DeleteByIdDepartment string = `delete from departments where id = $1`
-const UpdateByIdDepartment string = `update departments set name = $2 where id = $1`
+const UpdateByIdDepartment string = `update departments set name = $2 where id = $1 returning id`
 
 const InsertPassport string = "insert into passports (number, employee_id, type) values($1, $2, $3) returning id"
 const GetByIdPassport string = `select * from passports where id = $1`

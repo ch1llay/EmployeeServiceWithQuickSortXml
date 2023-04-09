@@ -13,17 +13,21 @@ type EmployeeRep interface {
 	GetById(id int) (*Model.Employee, error)
 	Get() ([]*Model.Employee, error)
 	Update(newEmployee *Model.Employee) (*Model.Employee, error)
-	DeleteById(id int) error
+	DeleteById(id int) (int, error)
 }
 type EmployeeRepository struct {
-	ConnectionString   string
-	passportRepository EmployeeRep
-	departmentRepository Repository
-	SqlFileReader    *SqlReader
+	ConnectionString     string
+	passportRepository   PassportRep
+	departmentRepository DepartmentRep
+	//SqlFileReader        *SqlReader
 }
 
-func NewEmployeeRepository(connectionString string, scriptPath string) *EmployeeRepository {
-	return &EmployeeRepository{ConnectionString: connectionString}}
+func NewEmployeeRepository(connectionString string) *EmployeeRepository {
+	return &EmployeeRepository{
+		ConnectionString:     connectionString,
+		passportRepository:   &PassportRepository{ConnectionString: connectionString},
+		departmentRepository: &DepartmentRepository{ConnectionString: connectionString},
+	}
 }
 
 func (e *EmployeeRepository) Insert(employee *Model.Employee) (*Model.Employee, error) {
@@ -67,12 +71,13 @@ func (e *EmployeeRepository) Get() (employees []*Model.Employee, err error) {
 	rows, err := db.Query(query.GetByIdEmployee)
 	defer rows.Close()
 
-
 	if err != nil {
 		return
 	}
 
 	e.scanEmployees(rows, employees)
+
+	return
 }
 
 func (e *EmployeeRepository) Update(employee *Model.Employee) (employeeRes *Model.Employee, err error) {
@@ -103,9 +108,9 @@ func (e *EmployeeRepository) DeleteById(id int) (deletingId int, err error) {
 	return
 }
 
-func (e *EmployeeRepository) scanEmployees(rows *sql.Rows, employees []*Model.Employee) []Model.Employee {
+func (e *EmployeeRepository) scanEmployees(rows *sql.Rows, employees []*Model.Employee) {
 	for rows.Next() {
-		employee := Model.Employee{}
+		employee := new(Model.Employee)
 		err := rows.Scan(&employee.Id, &employee.Name, &employee.Lastname, &employee.Patronymic, &employee.Birthday)
 		if err != nil {
 			fmt.Println(err)
@@ -114,6 +119,4 @@ func (e *EmployeeRepository) scanEmployees(rows *sql.Rows, employees []*Model.Em
 
 		employees = append(employees, employee)
 	}
-
-	return employees
 }

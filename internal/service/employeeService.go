@@ -8,11 +8,11 @@ import (
 
 type EmployeeServ interface {
 	GetById(id int) (*Model.Employee, error)
-	GetAll() (*Model.Employee, error)
-	Create(employee Model.Employee) (*Model.Employee, error)
-	DeleteById(id int) error
-	GetAllSort() (*Model.Employee, error)
-	UpdateById(employee *Model.Employee) (*Model.Employee, error)
+	GetAll() ([]*Model.Employee, error)
+	Create(employee *Model.Employee) (*Model.Employee, error)
+	Delete(id int) (int, error)
+	GetAllSort() ([]*Model.Employee, error)
+	Update(employee *Model.Employee) (*Model.Employee, error)
 }
 
 type EmployeeService struct {
@@ -32,6 +32,11 @@ func (e *EmployeeService) GetAll() ([]*Model.Employee, error) {
 	return e.EmployeeRepository.Get()
 }
 
+func (e *EmployeeService) GetAllSort() ([]*Model.Employee, error) {
+	return e.EmployeeRepository.Get()
+	// todo:quicksort(employeess)
+}
+
 func (e *EmployeeService) Create(employee *Model.Employee) (*Model.Employee, error) {
 	return e.EmployeeRepository.Insert(employee)
 }
@@ -46,6 +51,6 @@ func (e *EmployeeService) Update(employee *Model.Employee) (*Model.Employee, err
 	return newEmployee, err
 }
 
-func (e *EmployeeService) Delete(id int) error {
+func (e *EmployeeService) Delete(id int) (int, error) {
 	return e.EmployeeRepository.DeleteById(id)
 }

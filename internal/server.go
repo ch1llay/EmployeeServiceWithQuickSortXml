@@ -1,6 +1,7 @@
 package apiserver
 
 import (
+	"EmployeeServiceWithQuickSortXml/config"
 	"EmployeeServiceWithQuickSortXml/internal/handler"
 	"context"
 	"net/http"
@@ -15,20 +16,14 @@ func New() *Server {
 	return &Server{}
 }
 
-func (s *Server) Run(config *Config, handler *handler.Handler) error {
+func (s *Server) Configure(config *config.Config, handler *handler.Handler) {
 	s.httpServer = &http.Server{
-		Addr:           config.BindAddr,
+		Addr:           ":" + string(config.Port),
 		Handler:        handler.Router,
 		MaxHeaderBytes: 1 << 20,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 	}
-
-	if err := handler.EmployeeService.EmployeeRepository.InitDatabase(); err != nil {
-		return err
-	}
-
-	return s.httpServer.ListenAndServe()
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {

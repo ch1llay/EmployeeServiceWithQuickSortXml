@@ -22,7 +22,7 @@ func NewFileService(fileRep repository.FileRep) *FileService {
 func (f *FileService) Insert(file *Model.File) (string, error) {
 	return f.FileRepository.Insert(file)
 }
-func (f *FileService) GetByGuid(guid string) (*Model.File, error) {
+func (f *FileService) GetById(guid string) (*Model.File, error) {
 	return f.FileRepository.GetById(guid)
 }
 func (f *FileService) DeleteById(guid string) error {

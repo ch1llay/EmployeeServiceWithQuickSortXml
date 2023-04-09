@@ -7,6 +7,15 @@ import (
 	"log"
 )
 
+type Config struct {
+	Environment         string `json:"environment"`
+	Port                int    `json:"port"`
+	PostgresConnection  string `json:"postgresConnection"`
+	MongoConnection     string `json:"mongoConnection"`
+	MongoDbName         string `json:"mongoDbName"`
+	MongoCollectionName string `json:"mongoCollectionName"`
+}
+
 func ReadCfg() *Config {
 	filePath := "./.config/config.json"
 	fileByte, err := ioutil.ReadFile(filePath)
