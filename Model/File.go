@@ -16,5 +16,6 @@ type File struct {
 }
 
 type FileResponse struct {
-	Guid string `json:"guid"`
+	Guid        string `json:"guid"`
+	TypeSorting string `json:"type_sorting"`
 }

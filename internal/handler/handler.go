@@ -1,9 +1,7 @@
 package handler
 
 import (
-	"EmployeeServiceWithQuickSortXml/Model"
 	"EmployeeServiceWithQuickSortXml/internal/service"
-	"EmployeeServiceWithQuickSortXml/pkg/XMLHelper"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -11,13 +9,12 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
 type Handler struct {
 	Router          *mux.Router
 	EmployeeService service.EmployeeServ
+	ReportService   service.ReportServ
 	FileService     service.FileServ
 }
 
@@ -27,12 +24,17 @@ func (h *Handler) InitRoutes() {
 	})
 	h.Router.HandleFunc("/employee/{id}", h.GetEmployeeById).Methods("GET")
 	h.Router.HandleFunc("/employee/", h.GetAllEmployees).Methods("GET")
+	h.Router.HandleFunc("/employee/full", h.GetAllEmployeesFull).Methods("GET")
 	h.Router.HandleFunc("/employee/", h.CreateEmployee).Methods("POST")
 	h.Router.HandleFunc("/employee/", h.UpdateEmployee).Methods("PUT")
 	h.Router.HandleFunc("/employee/{id}", h.DeleteEmployee).Methods("DELETE")
 
+	h.Router.HandleFunc("/report/{employeeId}", h.CreateReportForEmployee).Methods("POST")
+	h.Router.HandleFunc("/report/{id}", h.GetReportById).Methods("Get")
+
 	h.Router.HandleFunc("/file/get", h.GetXMLFileId).Methods("GET")
-	h.Router.HandleFunc("/file/get-sorting", h.GetXMLFileIdSorting).Methods("GET")
+	h.Router.HandleFunc("/file/get-sorting", h.GetXMLFileIdSortingEmployeeFullByBirthday).Methods("GET")
+	h.Router.HandleFunc("/file/get-sorting", h.GetXMLFileIdSortingEmployeeFullByReportCount).Methods("GET")
 	h.Router.HandleFunc("/file/{guid}", h.GetFileById).Methods("GET")
 }
 func (h *Handler) respond(w http.ResponseWriter, code int, response interface{}) {
@@ -84,147 +86,4 @@ func NewHandler(employeeService service.EmployeeServ, fileService service.FileSe
 	h := &Handler{FileService: fileService, EmployeeService: employeeService, Router: mux.NewRouter()}
 	h.InitRoutes()
 	return h
-}
-
-func (h *Handler) GetEmployeeById(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	if id, err := strconv.Atoi(vars["id"]); err == nil {
-		if employee, err := h.EmployeeService.GetById(id); err == nil {
-			h.responseModel(w, employee)
-			return
-		} else if err.Error() == "404" {
-			h.responseError(w, 404, "employee not founded")
-			return
-		} else {
-			h.responseError(w, 500, err.Error())
-			return
-		}
-	} else {
-		h.responseError(w, 400, err.Error())
-	}
-	return
-}
-
-func (h *Handler) GetAllEmployees(w http.ResponseWriter, r *http.Request) {
-	employees, err := h.EmployeeService.GetAll()
-	if err != nil {
-		h.responseError(w, 500, err.Error())
-		return
-	}
-	h.responseModel(w, employees)
-	return
-}
-
-func (h *Handler) CreateEmployee(w http.ResponseWriter, r *http.Request) {
-	var employee Model.Employee
-	if err := h.GetJsonModel(r, &employee); err == nil {
-		if newEmployee, errM := h.EmployeeService.Create(&employee); errM == nil {
-			h.responseModel(w, newEmployee)
-			return
-		} else {
-			h.responseError(w, 500, err.Error())
-			return
-		}
-	} else {
-		h.responseError(w, 400, err.Error())
-		return
-	}
-
-}
-
-func (h *Handler) UpdateEmployee(w http.ResponseWriter, r *http.Request) {
-	var employee Model.Employee
-	if err := h.GetJsonModel(r, &employee); err == nil {
-		newEmployee, errM := h.EmployeeService.Update(&employee)
-		if errM.Error() == "404" {
-			h.responseError(w, 404, "not found")
-			return
-		}
-		h.responseModel(w, newEmployee)
-		return
-	} else {
-		w.WriteHeader(400)
-		return
-	}
-}
-
-func (h *Handler) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	if id, err := strconv.Atoi(vars["id"]); err == nil {
-		if delettingId, errM := h.EmployeeService.Delete(id); errM != nil && delettingId == id {
-			w.WriteHeader(200)
-		} else if errM.Error() == "404" {
-			w.WriteHeader(404)
-			return
-		} else {
-			h.responseError(w, 500, err.Error())
-			return
-		}
-	} else {
-		w.WriteHeader(400)
-		return
-	}
-}
-
-func (h *Handler) GetFileById(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["guid"]
-	if len(strings.TrimSpace(id)) != 0 {
-		if file, err := h.FileService.GetById(id); err == nil {
-			contentType := "application/xml"
-			//contentType = "application/octet-stream"
-			w.Header().Add("Content-Type", contentType)
-			w.Header().Add("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, file.FileName))
-			w.Header().Add("Content-Length", strconv.Itoa(len(file.Data)))
-			w.Write(file.Data)
-			return
-		} else if err.Error() == "404" {
-			w.WriteHeader(404)
-		} else {
-			w.WriteHeader(500)
-		}
-	} else {
-		w.WriteHeader(400)
-	}
-}
-
-func (h *Handler) GetXMLFileId(w http.ResponseWriter, r *http.Request) {
-	employees, err := h.EmployeeService.GetAll()
-	if err != nil {
-		w.WriteHeader(500)
-	}
-	file, err := XMLHelper.GetXmlFile(employees)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
-	fileGuid, err := h.FileService.Insert(file)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
-	h.responseModel(w, &Model.FileResponse{Guid: fileGuid})
-
-}
-
-func (h *Handler) GetXMLFileIdSorting(w http.ResponseWriter, r *http.Request) {
-	employees, err := h.EmployeeService.GetAllSortByBirthday()
-	if err != nil {
-		w.WriteHeader(500)
-	}
-	file, err := XMLHelper.GetXmlFile(employees)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
-	fileGuid, err := h.FileService.Insert(file)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
-	h.responseModel(w, Model.FileResponse{Guid: fileGuid})
 }

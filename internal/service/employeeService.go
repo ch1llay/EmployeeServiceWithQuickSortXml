@@ -14,8 +14,9 @@ type EmployeeServ interface {
 	GetEmployeeFullById(id int) (*Model.EmployeeFull, error)
 	GetAllEmployeesFull() ([]*Model.EmployeeFull, error)
 	Create(employee *Model.Employee) (*Model.Employee, error)
+	CreateReportForEmployee(employee *Model.Employee) (*Model.Employee, error)
 	Delete(id int) (int, error)
-	GetAllSortByBirthday() ([]*Model.Employee, error)
+	GetAllSortEmployeesFullByBirthday() ([]*Model.EmployeeFull, error)
 	GetAllEmployeesFullSortByReportCount() ([]*Model.EmployeeFull, error)
 	Update(employee *Model.Employee) (*Model.Employee, error)
 }
@@ -70,7 +71,7 @@ func (e *EmployeeService) GetAllEmployeesFull() ([]*Model.EmployeeFull, error) {
 	return employessFull, nil
 }
 
-func (e *EmployeeService) GetAllSortByBirthday() ([]*Model.EmployeeFull, error) {
+func (e *EmployeeService) GetAllSortEmployeesFullByBirthday() ([]*Model.EmployeeFull, error) {
 	employees, err := e.GetAllEmployeesFull()
 	if err != nil {
 		return nil, err

@@ -16,22 +16,10 @@ type EmployeeRepository struct {
 }
 
 type ReportRep interface {
-	Insert(employee *Model.Report) (*Model.Report, error)
+	Insert(report *Model.Report) (*Model.Report, error)
 	GetById(id int) (*Model.Report, error)
 	GetByEmployeeId(employeeId int) ([]*Model.Report, error)
 	DeleteById(id int) (int, error)
-}
-
-type DepartmentRep interface {
-	Insert(department *Model.Department) (*Model.Department, error)
-	GetById(id int) (*Model.Department, error)
-	Get() ([]*Model.Department, error)
-	Update(newDepartment *Model.Department) (*Model.Department, error)
-	DeleteById(id int) (int, error)
-}
-
-type DepartmentRepository struct {
-	ConnectionString string
 }
 
 type ReportRepository struct {
