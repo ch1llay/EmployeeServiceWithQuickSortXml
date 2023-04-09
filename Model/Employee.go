@@ -3,11 +3,11 @@ package Model
 import "time"
 
 type Employee struct {
-	Id         int       `json:"id"`
-	Name       string    `json:"name"`
-	Lastname   string    `json:"lastname"`
-	Patronymic string    `json:"patronymic"`
-	Birthday   time.Time `json:"birthday"`
+	Id         int       `json:"id" xml:"id,attr"`
+	Name       string    `json:"name" xml:"name,attr"`
+	Lastname   string    `json:"lastname" xml:"lastname,attr"`
+	Patronymic string    `json:"patronymic" xml:"patronymic,attr"`
+	Birthday   time.Time `json:"birthday" xml:"birthday"`
 }
 
 type Passport struct {
