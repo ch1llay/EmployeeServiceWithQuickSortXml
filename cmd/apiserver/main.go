@@ -1,12 +1,23 @@
 package main
 
 import (
-	"log"
+	"EmployeeServiceWithQuickSortXml/config"
+	"context"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
+	cfg := config.ReadCfg()
+	cxt, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	if err := srv.Run(config, handlers); err != nil {
-		log.Fatalf("error occured while running http server: %s", err.Error())
-	}
+	app := NewApp(cfg, cxt)
+	app.Init()
+	app.Start()
+
+	doneSignal := make(chan os.Signal, 1)
+	signal.Notify(doneSignal, syscall.SIGTERM, os.Interrupt)
+	<-doneSignal
 }

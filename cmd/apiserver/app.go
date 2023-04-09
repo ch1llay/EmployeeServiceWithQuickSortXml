@@ -26,8 +26,8 @@ func NewApp(cfg *config.Config, ctx context.Context) *App {
 	}
 }
 
-func (a *App) InitApp() {
-	fileRepository := repository.NewFileRepository(a.config.MongoConnection, a.config.MongoDbName, a.config.MongoCollectionName)
+func (a *App) Init() {
+	fileRepository := repository.NewFileMongoRepository(a.config.MongoConnection, a.config.MongoDbName, a.config.MongoCollectionName)
 	employeeRepository := repository.NewEmployeeRepository(a.config.PostgresConnection)
 	fileService := service.NewFileService(fileRepository)
 	employeeService := service.NewEmployeeService(employeeRepository)
@@ -38,7 +38,7 @@ func (a *App) InitApp() {
 
 func (a *App) Start() {
 	go func() {
-		log.Println(fmt.Sprintf("Server started on port %s enviroment is %s", a.config.Port, a.config.Env))
+		log.Println(fmt.Sprintf("Server started on port %s enviroment is %s", a.config.Port, a.config.Environment))
 		a.server.ListenAndServe()
 	}()
 }

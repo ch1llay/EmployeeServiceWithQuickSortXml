@@ -7,18 +7,6 @@ import (
 	"fmt"
 )
 
-type DepartmentRep interface {
-	Insert(department *Model.Department) (*Model.Department, error)
-	GetById(id int) (*Model.Department, error)
-	Get() ([]*Model.Department, error)
-	Update(newDepartment *Model.Department) (*Model.Department, error)
-	DeleteById(id int) (int, error)
-}
-
-type DepartmentRepository struct {
-	ConnectionString string
-}
-
 func (e *DepartmentRepository) Insert(department *Model.Department) (*Model.Department, error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {

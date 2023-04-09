@@ -25,3 +25,7 @@ const GetByIdPassport string = `select * from passports where id = $1`
 const GetByEmployeeIdPassport string = `select * from passports where employee_id = $1`
 const DeleteByIdPassport string = `delete from passports where id = $1`
 const UpdateByIdPassport string = `update passports set number = $2 where id = $1`
+
+const InsertFile string = "insert into files (name, insert_date, data) values($1, $2, $3) returning id"
+const GetByIdFile string = `select * from files where id = $1`
+const DeleteByIdFile string = `delete from files where id = $1`

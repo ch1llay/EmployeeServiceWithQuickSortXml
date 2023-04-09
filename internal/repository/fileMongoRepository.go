@@ -7,24 +7,15 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type FileRep interface {
-	Insert(file *Model.File) (string, error)
-	GetById(guid string) (*Model.File, error)
-	DeleteById(guid string) error
-}
-type FileRepository struct {
-	connectionString, databaseName, collectionName string
-}
-
-func NewFileRepository(connectionString, databaseName, collectionName string) *FileRepository {
-	return &FileRepository{
+func NewFileMongoRepository(connectionString, databaseName, collectionName string) *FileMongoRepository {
+	return &FileMongoRepository{
 		connectionString: connectionString,
 		databaseName:     databaseName,
 		collectionName:   collectionName,
 	}
 }
 
-func (f *FileRepository) mongoSession(action func(*mgo.Session) error) error {
+func (f *FileMongoRepository) mongoSession(action func(*mgo.Session) error) error {
 	session, err := mgo.Dial(f.connectionString)
 	if err != nil {
 		return fmt.Errorf("MongoDB session creation error: %s", err.Error())
@@ -37,7 +28,7 @@ func (f *FileRepository) mongoSession(action func(*mgo.Session) error) error {
 	return nil
 }
 
-func (f *FileRepository) Insert(file *Model.File) (guid string, err error) {
+func (f *FileMongoRepository) Insert(file *Model.File) (guid string, err error) {
 	err = f.mongoSession(func(session *mgo.Session) error {
 		collection := session.DB(f.databaseName).C(f.collectionName)
 		if err := collection.Insert(file); err != nil {
@@ -54,7 +45,7 @@ func (f *FileRepository) Insert(file *Model.File) (guid string, err error) {
 	return
 }
 
-func (f *FileRepository) GetById(guid string) (file *Model.File, err error) {
+func (f *FileMongoRepository) GetById(guid string) (file *Model.File, err error) {
 	err = f.mongoSession(func(session *mgo.Session) error {
 		collection := session.DB(f.databaseName).C(f.collectionName)
 
@@ -69,7 +60,7 @@ func (f *FileRepository) GetById(guid string) (file *Model.File, err error) {
 	return
 
 }
-func (f *FileRepository) DeleteById(guid string) (err error) {
+func (f *FileMongoRepository) DeleteById(guid string) (err error) {
 	err = f.mongoSession(func(session *mgo.Session) error {
 		collection := session.DB(f.databaseName).C(f.collectionName)
 

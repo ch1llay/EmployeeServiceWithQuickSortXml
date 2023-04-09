@@ -8,20 +8,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type EmployeeRep interface {
-	Insert(employee *Model.Employee) (*Model.Employee, error)
-	GetById(id int) (*Model.Employee, error)
-	Get() ([]*Model.Employee, error)
-	Update(newEmployee *Model.Employee) (*Model.Employee, error)
-	DeleteById(id int) (int, error)
-}
-type EmployeeRepository struct {
-	ConnectionString     string
-	passportRepository   PassportRep
-	departmentRepository DepartmentRep
-	//SqlFileReader        *SqlReader
-}
-
 func NewEmployeeRepository(connectionString string) *EmployeeRepository {
 	return &EmployeeRepository{
 		ConnectionString:     connectionString,
