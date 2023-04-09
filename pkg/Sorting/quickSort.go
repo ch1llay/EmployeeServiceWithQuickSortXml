@@ -70,8 +70,8 @@ func quickSortByBirthday(arr []*Model.EmployeeFull, from, to int) {
 	if from < to {
 		pivotIndex := sortPartByBirthday(arr, from, to)
 
-		QuickSortByBirthday(arr, from, pivotIndex-1)
-		QuickSortByBirthday(arr, pivotIndex, to)
+		quickSortByBirthday(arr, from, pivotIndex-1)
+		quickSortByBirthday(arr, pivotIndex, to)
 	}
 }
 
