@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-func GetXmlFile(employees []*Model.Employee) (*Model.File, error) {
+func GetXmlFile(employees []*Model.EmployeeFull) (*Model.File, error) {
 	tmp := struct {
-		Employees []*Model.Employee `xml:"employee"`
-		XMLName   xml.Name          `xml:"Employees"`
+		Employees []*Model.EmployeeFull `xml:"employee"`
+		XMLName   xml.Name              `xml:"Employees"`
 	}{Employees: employees}
 
 	data, err := xml.MarshalIndent(tmp, "", "   ")

@@ -3,6 +3,7 @@ package service
 import (
 	"EmployeeServiceWithQuickSortXml/Model"
 	"EmployeeServiceWithQuickSortXml/internal/repository"
+	"EmployeeServiceWithQuickSortXml/pkg/Sorting"
 	"errors"
 	"fmt"
 )
@@ -14,8 +15,8 @@ type EmployeeServ interface {
 	GetAllEmployeesFull() ([]*Model.EmployeeFull, error)
 	Create(employee *Model.Employee) (*Model.Employee, error)
 	Delete(id int) (int, error)
-	GetAllSort() ([]*Model.Employee, error)
-	GetAllEmployeesFullSort() ([]*Model.EmployeeFull, error)
+	GetAllSortByBirthday() ([]*Model.Employee, error)
+	GetAllEmployeesFullSortByReportCount() ([]*Model.EmployeeFull, error)
 	Update(employee *Model.Employee) (*Model.Employee, error)
 }
 
@@ -69,14 +70,22 @@ func (e *EmployeeService) GetAllEmployeesFull() ([]*Model.EmployeeFull, error) {
 	return employessFull, nil
 }
 
-func (e *EmployeeService) GetAllSort() ([]*Model.Employee, error) {
-	return e.EmployeeRepository.Get()
-	// todo:quicksort(employeess)
+func (e *EmployeeService) GetAllSortByBirthday() ([]*Model.EmployeeFull, error) {
+	employees, err := e.GetAllEmployeesFull()
+	if err != nil {
+		return nil, err
+	}
+	Sorting.QuickSortByBirthday(employees)
+	return employees, nil
 }
 
-func (e *EmployeeService) GetAllEmployeesFullSort() ([]*Model.EmployeeFull, error) {
-	return e.GetAllEmployeesFull()
-	// todo:quicksort(employeess)
+func (e *EmployeeService) GetAllEmployeesFullSortByReportCount() ([]*Model.EmployeeFull, error) {
+	employees, err := e.GetAllEmployeesFull()
+	if err != nil {
+		return nil, err
+	}
+	Sorting.QuickSortByReportCount(employees)
+	return employees, nil
 }
 
 func (e *EmployeeService) Create(employee *Model.Employee) (*Model.Employee, error) {

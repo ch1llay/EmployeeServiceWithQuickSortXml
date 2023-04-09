@@ -210,7 +210,7 @@ func (h *Handler) GetXMLFileId(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetXMLFileIdSorting(w http.ResponseWriter, r *http.Request) {
-	employees, err := h.EmployeeService.GetAllSort()
+	employees, err := h.EmployeeService.GetAllSortByBirthday()
 	if err != nil {
 		w.WriteHeader(500)
 	}
