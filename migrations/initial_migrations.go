@@ -3,7 +3,7 @@ package migrations
 const initial = `
 create table public.employees
 (
-    id         serial
+    id         serial primary key 
         primary key,
     name       varchar(30),
     lastname   varchar(30),
@@ -14,6 +14,7 @@ create table public.employees
 alter table public.employees
     owner to postgres;
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 create table public.files(
     id uuid default uuid_generate_v4() not null,
     filename varchar(30),
@@ -24,4 +25,11 @@ create table public.files(
 alter table public.files
     owner to postgres;
 
+
+create table Reports(
+    id serial,
+    name varchar(30),
+    text text,
+    employee_id int references employees(id) on delete cascade
+)
 `

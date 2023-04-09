@@ -10,18 +10,16 @@ type EmployeeRep interface {
 	DeleteById(id int) (int, error)
 }
 type EmployeeRepository struct {
-	ConnectionString     string
-	passportRepository   PassportRep
-	departmentRepository DepartmentRep
+	ConnectionString  string
+	ReportRepository_ ReportRep
 	//SqlFileReader        *SqlReader
 }
 
-type PassportRep interface {
-	Insert(employee *Model.Passport) (*Model.Passport, error)
-	GetById(id int) (*Model.Passport, error)
-	Get() ([]*Model.Passport, error)
-	Update(newEmployee *Model.Employee) (*Model.Employee, error)
-	DeleteById(id int) error
+type ReportRep interface {
+	Insert(employee *Model.Report) (*Model.Report, error)
+	GetById(id int) (*Model.Report, error)
+	GetByEmployeeId(employeeId int) ([]*Model.Report, error)
+	DeleteById(id int) (int, error)
 }
 
 type DepartmentRep interface {
@@ -36,7 +34,7 @@ type DepartmentRepository struct {
 	ConnectionString string
 }
 
-type PassportRepository struct {
+type ReportRepository struct {
 	ConnectionString string
 }
 type FilePGRepository struct {

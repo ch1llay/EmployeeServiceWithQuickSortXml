@@ -10,9 +10,8 @@ import (
 
 func NewEmployeeRepository(connectionString string) *EmployeeRepository {
 	return &EmployeeRepository{
-		ConnectionString:     connectionString,
-		passportRepository:   &PassportRepository{ConnectionString: connectionString},
-		departmentRepository: &DepartmentRepository{ConnectionString: connectionString},
+		ConnectionString:  connectionString,
+		ReportRepository_: &ReportRepository{ConnectionString: connectionString},
 	}
 }
 

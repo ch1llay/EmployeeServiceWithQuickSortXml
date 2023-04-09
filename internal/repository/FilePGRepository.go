@@ -4,6 +4,7 @@ import (
 	"EmployeeServiceWithQuickSortXml/Model"
 	"EmployeeServiceWithQuickSortXml/internal/repository/query"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -29,13 +30,14 @@ func (e *FilePGRepository) GetById(id string) (*Model.File, error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
+		return &Model.File{}, err
 	}
 
 	defer db.Close()
 	file := Model.File{}
 	err = db.QueryRow(query.GetByIdFile, id).Scan(&file.Id, &file.FileName, &file.InsertDate, &file.Data)
 	if err != nil {
-		return &Model.File{}, err
+		return &Model.File{}, errors.New("404")
 	}
 
 	return &file, nil
