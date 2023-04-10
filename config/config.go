@@ -8,12 +8,9 @@ import (
 )
 
 type Config struct {
-	Environment         string `json:"environment"`
-	Port                int    `json:"port"`
-	PostgresConnection  string `json:"postgresConnection"`
-	MongoConnection     string `json:"mongoConnection"`
-	MongoDbName         string `json:"mongoDbName"`
-	MongoCollectionName string `json:"mongoCollectionName"`
+	Environment        string `json:"environment"`
+	Port               int    `json:"port"`
+	PostgresConnection string `json:"postgresConnection"`
 }
 
 func ReadCfg() *Config {
