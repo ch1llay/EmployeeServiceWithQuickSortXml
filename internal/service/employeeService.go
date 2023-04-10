@@ -28,8 +28,8 @@ type EmployeeService struct {
 	FileRepository     repository.FileRep
 }
 
-func NewEmployeeService(employeeRep repository.EmployeeRep) *EmployeeService {
-	return &EmployeeService{EmployeeRepository: employeeRep}
+func NewEmployeeService(employeeRep repository.EmployeeRep, reportRepository repository.ReportRep) *EmployeeService {
+	return &EmployeeService{EmployeeRepository: employeeRep, ReportRepository: reportRepository}
 }
 
 func (e *EmployeeService) GetById(id int) (*Model.Employee, error) {
@@ -67,7 +67,7 @@ func (e *EmployeeService) GetAllEmployeesFull() ([]*Model.EmployeeFull, error) {
 	if err != nil {
 		return nil, err
 	}
-	employessFull := make([]*Model.EmployeeFull, len(employees))
+	employessFull := []*Model.EmployeeFull{}
 	for _, employee := range employees {
 		reports, err := e.ReportRepository.GetByEmployeeId(employee.Id)
 		if err != nil {

@@ -11,8 +11,8 @@ import (
 
 func NewEmployeeRepository(connectionString string) *EmployeeRepository {
 	return &EmployeeRepository{
-		ConnectionString:  connectionString,
-		ReportRepository_: &ReportRepository{ConnectionString: connectionString},
+		ConnectionString: connectionString,
+		//ReportRepository_: &ReportRepository{ConnectionString: connectionString},
 	}
 }
 func InitRepository(connectionString string) {
@@ -86,7 +86,7 @@ func (e *EmployeeRepository) Update(employee *Model.Employee) (employeeRes *Mode
 	}
 
 	defer db.Close()
-	err = db.QueryRow(query.UpdateByIdEmployee, employee.Id, employee.Name, employee.Lastname, employee.Patronymic).Scan()
+	err = db.QueryRow(query.UpdateByIdEmployee, employee.Id, employee.Name, employee.Lastname, employee.Patronymic, employee.Birthday).Scan()
 	if err != nil {
 		employeeRes = employee
 	}

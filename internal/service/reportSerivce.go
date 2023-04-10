@@ -16,6 +16,9 @@ type ReportService struct {
 	ReportRepository repository.ReportRep
 }
 
+func NewReportService(reportRepository repository.ReportRep) *ReportService {
+	return &ReportService{ReportRepository: reportRepository}
+}
 func (r *ReportService) CreateReportForEmployee(report *Model.Report) (*Model.Report, error) {
 	return r.ReportRepository.Insert(report)
 }
@@ -28,6 +31,6 @@ func (r *ReportService) GetReportsByEmployeeId(id int) ([]*Model.Report, error) 
 	return r.ReportRepository.GetByEmployeeId(id)
 }
 
-func (e *ReportService) DeleteById(id int) (int, error) {
-	return e.ReportRepository.DeleteById(id)
+func (r *ReportService) DeleteById(id int) (int, error) {
+	return r.ReportRepository.DeleteById(id)
 }

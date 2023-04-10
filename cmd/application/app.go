@@ -28,10 +28,12 @@ func NewApp(cfg *config.Config, ctx context.Context) *App {
 func (a *App) Init() {
 	fileRepository := repository.NewFilePGRepository(a.config.PostgresConnection)
 	employeeRepository := repository.NewEmployeeRepository(a.config.PostgresConnection)
+	reportRepository := repository.NewReportRepository(a.config.PostgresConnection)
 	fileService := service.NewFileService(fileRepository)
-	employeeService := service.NewEmployeeService(employeeRepository)
-	handlers := handler.NewHandler(employeeService, fileService)
-	repository.InitRepository(a.config.PostgresConnection)
+	employeeService := service.NewEmployeeService(employeeRepository, reportRepository)
+	reportService := service.NewReportService(reportRepository)
+	handlers := handler.NewHandler(employeeService, reportService, fileService)
+	//repository.InitRepository(a.config.PostgresConnection)
 	a.server = apiserver.New(a.config, handlers)
 }
 

@@ -7,6 +7,10 @@ import (
 	"fmt"
 )
 
+func NewReportRepository(connectionString string) *ReportRepository {
+	return &ReportRepository{
+		ConnectionString: connectionString}
+}
 func (r *ReportRepository) Insert(report *Model.Report) (*Model.Report, error) {
 	db, err := sql.Open("postgres", r.ConnectionString)
 	if err != nil {
@@ -67,7 +71,7 @@ func (r *ReportRepository) DeleteById(id int) (deletingId int, err error) {
 func (r *ReportRepository) scanReports(rows *sql.Rows, reports []*Model.Report) ([]*Model.Report, error) {
 	for rows.Next() {
 		report := new(Model.Report)
-		err := rows.Scan(&report.Id, &report.Name, &report.Text, report.EmployeeId)
+		err := rows.Scan(&report.Id, &report.Name, &report.Text, &report.EmployeeId)
 		if err != nil {
 			fmt.Println(err)
 			continue

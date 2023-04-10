@@ -1,7 +1,8 @@
 package migrations
 
+const InitialCreateDataBase = `create database employeesservice;`
 const Initial = `
-create database employeeservice;
+
 create table if not exists public.employees
 (
     id         serial primary key,
@@ -19,7 +20,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 create table if not exists public.files(
                                            id uuid default uuid_generate_v4() not null,
                                            filename varchar(30),
-                                           insert_date date,
+                                           insert_date timestamp,
                                            data bytea not null
 );
 
@@ -34,15 +35,14 @@ create table if not exists public.Reports(
                                              employee_id int references employees(id) on delete cascade
 );
 
-CREATE FUNCTION expire_table_delete_old_rows() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
+create function expire_table_delete_old_rows() returns trigger
+    language plpgsql
+as
+$$
 BEGIN
-  DELETE FROM files WHERE files.insert_date < NOW() - INTERVAL '1 minute';
-  RETURN NEW;
+    DELETE FROM files WHERE files.insert_date < (NOW() - ((CURRENT_TIMESTAMP AT TIME ZONE 'UTC-3') - interval '3 minute'));
+    RETURN NEW;
 END;
 $$;
-CREATE TRIGGER expire_table_delete_old_rows_trigger
-    AFTER INSERT ON files
-    EXECUTE PROCEDURE expire_table_delete_old_rows();
-`
+
+alter function expire_table_delete_old_rows() owner to postgres;

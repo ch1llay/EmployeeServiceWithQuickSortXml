@@ -12,8 +12,8 @@ type EmployeeRep interface {
 	DeleteById(id int) (int, error)
 }
 type EmployeeRepository struct {
-	ConnectionString  string
-	ReportRepository_ ReportRep
+	ConnectionString string
+	//ReportRepository_ ReportRep
 	//SqlFileReader        *SqlReader
 }
 

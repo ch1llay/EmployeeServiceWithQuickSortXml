@@ -37,7 +37,7 @@ func quickSortByReportCount(arr []*Model.EmployeeFull, from, to int) {
 	}
 }
 func QuickSortByReportCount(arr []*Model.EmployeeFull) {
-	quickSortByReportCount(arr, 0, len(arr))
+	quickSortByReportCount(arr, 0, len(arr)-1)
 }
 
 func sortPartByBirthday(arr []*Model.EmployeeFull, from, to int) int {
@@ -76,5 +76,5 @@ func quickSortByBirthday(arr []*Model.EmployeeFull, from, to int) {
 }
 
 func QuickSortByBirthday(arr []*Model.EmployeeFull) {
-	quickSortByBirthday(arr, 0, len(arr))
+	quickSortByBirthday(arr, 0, len(arr)-1)
 }
