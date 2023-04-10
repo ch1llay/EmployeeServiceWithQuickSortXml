@@ -17,11 +17,8 @@ type Server struct {
 func New(config *config.Config, handler *handler.Handler) *Server {
 	return &Server{
 		httpServer: &http.Server{
-			Addr:    fmt.Sprintf(":%d", config.Port),
-			Handler: handler.Router,
-			//BaseContext: func(_ net.Listener) context.Context {
-			//	return ctx
-			//},
+			Addr:           fmt.Sprintf(":%d", config.Port),
+			Handler:        handler.Router,
 			MaxHeaderBytes: 1 << 20,
 			ReadTimeout:    10 * time.Second,
 			WriteTimeout:   10 * time.Second,
