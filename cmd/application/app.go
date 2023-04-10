@@ -30,7 +30,6 @@ func (a *App) Init() {
 	employeeService := service.NewEmployeeService(employeeRepository, reportRepository)
 	reportService := service.NewReportService(reportRepository)
 	handlers := handler.NewHandler(employeeService, reportService, fileService)
-	//repository.InitRepository(a.config.PostgresConnection)
 	a.server = apiserver.New(a.config, handlers)
 }
 

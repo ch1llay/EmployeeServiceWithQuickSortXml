@@ -8,7 +8,7 @@ import (
 func main() {
 	cfg := config.ReadCfg()
 
-	app := application.NewApp(cfg, nil)
+	app := application.NewApp(cfg)
 	app.Init()
 	app.Start()
 

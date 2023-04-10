@@ -15,7 +15,7 @@ func (e *FilePGRepository) Insert(file *Model.File) (string, error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return "", err
 	}
 
 	defer db.Close()

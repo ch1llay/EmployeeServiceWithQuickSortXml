@@ -15,7 +15,7 @@ func (r *ReportRepository) Insert(report *Model.Report) (*Model.Report, error) {
 	db, err := sql.Open("postgres", r.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return &Model.Report{}, err
 	}
 
 	defer db.Close()
@@ -31,7 +31,7 @@ func (r *ReportRepository) GetById(id int) (*Model.Report, error) {
 	db, err := sql.Open("postgres", r.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return &Model.Report{}, err
 	}
 
 	defer db.Close()

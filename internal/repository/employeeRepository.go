@@ -35,7 +35,7 @@ func (e *EmployeeRepository) Insert(employee *Model.Employee) (*Model.Employee, 
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return &Model.Employee{}, err
 	}
 
 	defer db.Close()
@@ -51,7 +51,7 @@ func (e *EmployeeRepository) GetById(id int) (*Model.Employee, error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return &Model.Employee{}, err
 	}
 
 	defer db.Close()
