@@ -19,6 +19,7 @@ func InitRepository(connectionString string) {
 	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	defer db.Close()
@@ -26,6 +27,7 @@ func InitRepository(connectionString string) {
 	err = db.QueryRow(migrations.Initial).Scan(&id)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 }
 
@@ -33,6 +35,7 @@ func (e *EmployeeRepository) Insert(employee *Model.Employee) (*Model.Employee, 
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	defer db.Close()
@@ -48,6 +51,7 @@ func (e *EmployeeRepository) GetById(id int) (*Model.Employee, error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	defer db.Close()
@@ -64,6 +68,7 @@ func (e *EmployeeRepository) Get() (employees []*Model.Employee, err error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	defer db.Close()
@@ -99,6 +104,7 @@ func (e *EmployeeRepository) DeleteById(id int) (deletingId int, err error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	defer db.Close()

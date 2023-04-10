@@ -1,6 +1,5 @@
 package migrations
 
-const InitialCreateDataBase = `create database employeesservice;`
 const Initial = `
 
 create table if not exists public.employees
@@ -46,3 +45,4 @@ END;
 $$;
 
 alter function expire_table_delete_old_rows() owner to postgres;
+`

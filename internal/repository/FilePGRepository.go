@@ -15,6 +15,7 @@ func (e *FilePGRepository) Insert(file *Model.File) (string, error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	defer db.Close()
@@ -47,6 +48,7 @@ func (e *FilePGRepository) DeleteById(id string) (err error) {
 	db, err := sql.Open("postgres", e.ConnectionString)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	defer db.Close()

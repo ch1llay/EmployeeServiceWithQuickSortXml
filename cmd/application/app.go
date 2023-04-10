@@ -6,22 +6,19 @@ import (
 	"EmployeeServiceWithQuickSortXml/internal/handler"
 	"EmployeeServiceWithQuickSortXml/internal/repository"
 	"EmployeeServiceWithQuickSortXml/internal/service"
-	"context"
 	"fmt"
 	"log"
 )
 
 type App struct {
-	server  *apiserver.Server
-	config  *config.Config
-	context context.Context
+	server *apiserver.Server
+	config *config.Config
 }
 
-func NewApp(cfg *config.Config, ctx context.Context) *App {
+func NewApp(cfg *config.Config) *App {
 	return &App{
-		server:  nil,
-		config:  cfg,
-		context: ctx,
+		server: nil,
+		config: cfg,
 	}
 }
 

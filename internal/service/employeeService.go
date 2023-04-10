@@ -67,6 +67,7 @@ func (e *EmployeeService) GetAllEmployeesFull() ([]*Model.EmployeeFull, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	employessFull := []*Model.EmployeeFull{}
 	for _, employee := range employees {
 		reports, err := e.ReportRepository.GetByEmployeeId(employee.Id)
