@@ -95,3 +95,22 @@ func (h *Handler) DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *Handler) GetEmployeeByIdWithBinarySearch(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	if id, err := strconv.Atoi(vars["id"]); err == nil {
+		if employee, err := h.EmployeeService.GetByIdWithBinarySearch(id); err == nil {
+			h.responseModel(w, employee)
+			return
+		} else if err.Error() == "404" {
+			h.responseError(w, 404, "employee not founded")
+			return
+		} else {
+			h.responseError(w, 500, err.Error())
+			return
+		}
+	} else {
+		h.responseError(w, 400, err.Error())
+	}
+	return
+}

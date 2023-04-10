@@ -28,6 +28,7 @@ func (h *Handler) InitRoutes() {
 	h.Router.HandleFunc("/employee/", h.CreateEmployee).Methods("POST")
 	h.Router.HandleFunc("/employee/", h.UpdateEmployee).Methods("PUT")
 	h.Router.HandleFunc("/employee/{id}", h.DeleteEmployee).Methods("DELETE")
+	h.Router.HandleFunc("/employee/binary-search/{id}", h.GetEmployeeByIdWithBinarySearch).Methods("GET")
 
 	h.Router.HandleFunc("/report/{employeeId}", h.CreateReportForEmployee).Methods("POST")
 	h.Router.HandleFunc("/report/{id}", h.GetReportById).Methods("Get")

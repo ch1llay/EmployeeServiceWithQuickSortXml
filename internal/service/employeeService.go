@@ -3,6 +3,7 @@ package service
 import (
 	"EmployeeServiceWithQuickSortXml/Model"
 	"EmployeeServiceWithQuickSortXml/internal/repository"
+	"EmployeeServiceWithQuickSortXml/pkg/Searching"
 	"EmployeeServiceWithQuickSortXml/pkg/Sorting"
 	"errors"
 	"fmt"
@@ -14,11 +15,11 @@ type EmployeeServ interface {
 	GetEmployeeFullById(id int) (*Model.EmployeeFull, error)
 	GetAllEmployeesFull() ([]*Model.EmployeeFull, error)
 	Create(employee *Model.Employee) (*Model.Employee, error)
-	CreateReportForEmployee(employee *Model.Employee) (*Model.Employee, error)
 	Delete(id int) (int, error)
 	GetAllSortEmployeesFullByBirthday() ([]*Model.EmployeeFull, error)
 	GetAllEmployeesFullSortByReportCount() ([]*Model.EmployeeFull, error)
 	Update(employee *Model.Employee) (*Model.Employee, error)
+	GetByIdWithBinarySearch(id int) (*Model.EmployeeFull, error)
 }
 
 type EmployeeService struct {
@@ -33,6 +34,15 @@ func NewEmployeeService(employeeRep repository.EmployeeRep) *EmployeeService {
 
 func (e *EmployeeService) GetById(id int) (*Model.Employee, error) {
 	return e.EmployeeRepository.GetById(id)
+}
+
+func (e *EmployeeService) GetByIdWithBinarySearch(id int) (*Model.EmployeeFull, error) {
+	employees, err := e.GetAllEmployeesFull()
+	if err != nil {
+		return nil, err
+	}
+	_, employee := Searching.BinarySearch(employees, id)
+	return employee, nil
 }
 
 func (e *EmployeeService) GetEmployeeFullById(id int) (*Model.EmployeeFull, error) {

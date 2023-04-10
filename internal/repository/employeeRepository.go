@@ -3,6 +3,7 @@ package repository
 import (
 	"EmployeeServiceWithQuickSortXml/Model"
 	"EmployeeServiceWithQuickSortXml/internal/repository/query"
+	"EmployeeServiceWithQuickSortXml/migrations"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -12,6 +13,19 @@ func NewEmployeeRepository(connectionString string) *EmployeeRepository {
 	return &EmployeeRepository{
 		ConnectionString:  connectionString,
 		ReportRepository_: &ReportRepository{ConnectionString: connectionString},
+	}
+}
+func InitRepository(connectionString string) {
+	db, err := sql.Open("postgres", connectionString)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer db.Close()
+	var id int
+	err = db.QueryRow(migrations.Initial).Scan(&id)
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 

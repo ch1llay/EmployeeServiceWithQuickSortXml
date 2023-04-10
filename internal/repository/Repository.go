@@ -1,6 +1,8 @@
 package repository
 
-import "EmployeeServiceWithQuickSortXml/Model"
+import (
+	"EmployeeServiceWithQuickSortXml/Model"
+)
 
 type EmployeeRep interface {
 	Insert(employee *Model.Employee) (*Model.Employee, error)
