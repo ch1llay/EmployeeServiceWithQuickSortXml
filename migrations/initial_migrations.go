@@ -34,5 +34,15 @@ create table if not exists public.Reports(
                                              employee_id int references employees(id) on delete cascade
 );
 
-insert into employees (name) values ('abc') returning id;
+CREATE FUNCTION expire_table_delete_old_rows() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  DELETE FROM files WHERE files.insert_date < NOW() - INTERVAL '1 minute';
+  RETURN NEW;
+END;
+$$;
+CREATE TRIGGER expire_table_delete_old_rows_trigger
+    AFTER INSERT ON files
+    EXECUTE PROCEDURE expire_table_delete_old_rows();
 `
